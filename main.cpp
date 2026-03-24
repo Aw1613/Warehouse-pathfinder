@@ -27,77 +27,43 @@ class Grid{
     public:
         int obst;
         char arr[10][10];   // matrix size defined 
-        // void value_setter(Grid obj){
-        //     obj.arr[3][5] = 'X';
-        //     obj.arr[7][1] = 'X';
-        // }
         
-        void grid_disp_logic(Grid obj){
-            // For user input based obstacle course , uncomment it 
-
-
-            // // First taking input from the user to place the obstacles on the map 
-            // cout<<"Please enter the number of obstacles you want in the course :"<<endl;
-            // cin>>obst;
-            // int h = 0;
-            // int k = 0;
-            // cout<<"Please enter the cordinates for the obstacles in X and Y :"<<endl;
-            // // This will display the obstacle acording to the user input 
-            // for (int i = 0; i < obst; i++)
-            // {
-            //     cout<<"Row "<<i+1<<" : ";
-            //     cin>>h;
-            //     cout<<"Column "<<i+1<<" : ";
-            //     cin>>k;
-            //     cout<<endl;
-            //     obj.arr[h][k] = 'X';
-            // }
-            
+        
+        void girdSetup(void){
+            for (int i = 0; i < 10; i++){
+                for (int j = 0; j < 10; j++){
+                    arr[i][j] = '.';
+                }
+            }
 
             // Hardcoded map for testing 
 
-            obj.arr[0][0] = 'S';
+            arr[0][0] = 'S';
+            
+            arr[1][3] = 'X';
+            arr[2][3] = 'X';
+            arr[3][3] = 'X';
+            arr[4][3] = 'X';
+            arr[4][4] = 'X';
+            arr[4][5] = 'X';
 
-            obj.arr[1][3] = 'X';
-            obj.arr[2][3] = 'X';
-            obj.arr[3][3] = 'X';
-            obj.arr[4][3] = 'X';
-            obj.arr[4][4] = 'X';
-            obj.arr[4][5] = 'X';
+            arr[2][7] = 'X';
+            arr[3][7] = 'X';
+            arr[3][6] = 'X';
 
-            obj.arr[2][7] = 'X';
-            obj.arr[3][7] = 'X';
-            obj.arr[3][6] = 'X';
+            arr[7][8] = 'X';
+            arr[8][8] = 'X';
 
-            obj.arr[7][8] = 'X';
-            obj.arr[8][8] = 'X';
-
-            obj.arr[9][9] = 'E';
-
-
+            arr[9][9] = 'E';
+            
+        }
+        void gridDisplay(void){
             for (int i = 0; i < 10; i++)
             {
-                cout<<"| ";
+                cout<<"|";
                 for (int j = 0; j < 10; j++)
                 {
-                    if (obj.arr[i][j] == 'S')
-                    {
-                        obj.arr[i][j] = 'S';
-                        cout<<" S ";
-                    }
-                    else if (obj.arr[i][j] == 'E'){
-                        obj.arr[i][j] = 'E';
-                        cout<<" E ";
-                    }
-                    else if(obj.arr[i][j] == 'X'){
-                        obj.arr[i][j] = 'x';
-                        cout<<" X ";
-                    }
-                    else{
-                        obj.arr[i][j] = '.';
-                        cout<<" . ";
-                    }
-                    
+                    cout<<" "<<arr[i][j]<<" ";
                 }
                 cout<<"|"<<endl;
                 
@@ -106,10 +72,43 @@ class Grid{
         }
 };
 
+// Making the Robot and initalzing its postion 
+class Robot{
+    public:
+    // Placing robot at 0,0
+        int map_x = 9;
+        int map_y = 9;
+
+        // Stores the address of the grid 
+        Grid& grid;
+
+        Robot(Grid& g): grid(g){}
+        
+        void location_fetcher(void){
+            cout<<"The location of the robot is "<<map_x<<" , "<<map_y<<endl;
+            cout<<"And the staus is "<<grid.arr[map_x][map_y]<<endl;
+        }
+
+        void getNeighbour(void){
+            char up = grid.arr[map_x][map_y + 1];
+            char down = grid.arr[map_x][map_y - 1];
+            char right = grid.arr[map_x + 1][map_y];
+            char left = grid.arr[map_x - 1][map_y];
+            cout<<up<<endl<<down<<endl<<right<<endl<<left<<endl;
+
+        }
+};
+
+
+
 int main(){
     Grid g1;
     cout<<"This is the grid \n\n\n\n";
-    g1.grid_disp_logic(g1);
+    g1.girdSetup();
+    g1.gridDisplay();
     cout<<"\n\n\n\n";
+    Robot r1(g1);
+    r1.location_fetcher();
+    r1.getNeighbour();
     return 0;
 }
