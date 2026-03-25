@@ -20,6 +20,7 @@ Map randomizer :- genrates dynamic maps
 
 
 #include<iostream>
+#include<queue>
 using namespace std;
 
 // Grid setup
@@ -79,6 +80,11 @@ class Robot{
         int map_row = 0;
         int map_col = 9;
 
+        char up = 'V';
+        char down = 'V';
+        char right = 'V';
+        char left = 'V';
+
         // Stores the address of the grid 
         Grid& grid;
 
@@ -91,29 +97,73 @@ class Robot{
 
         void getNeighbour(void){
             
-            
-            char up = 'V';
-            char down = 'V';
-            char right = 'V';
-            char left = 'V';
-            // up = grid.arr[map_row][map_col + 1];
-            // down = grid.arr[map_row][map_col - 1];
-            // right = grid.arr[map_row + 1][map_col];
-            // left = grid.arr[map_row - 1][map_col];
-            
-
-            // 8,0
             if (map_row > 0)  up = grid.arr[map_row - 1][map_col]; 
             if (map_row < 9)  down = grid.arr[map_row +1][map_col];
             if (map_col > 0)  left = grid.arr[map_row][map_col - 1];
             if (map_col < 9)  right = grid.arr[map_row][map_col + 1]; 
             
             
-            
             cout<<up<<endl<<down<<endl<<right<<endl<<left<<endl;
 
         }
+        
 };
+
+class BFS : public Grid , public Robot{
+    public:
+        queue<pair<int,int>> q;
+        
+        // This is going to store the data if the cells are Visited or not and by default , all are set to zero
+        bool visited[10][10] = {false};
+        int parentRow[10][10];      // This is going to store the Row of the previos cell form which it came 
+        int parentCol[10][10];      // same , stores col of previous cell and there will be a whole matrix for one cordinat (col here)
+        // current row and col of the cell 
+        int r;
+        int c; 
+
+        void pathFind(void){
+            q.push({0,0});
+
+            while (!q.empty())
+            {
+                if (arr[r][c] == 'E')
+                {
+                    break;
+                }
+                else {
+                    q.pop();
+                }
+                if (up != 'V' && up != 'X' && visited[r-1][c] == false)
+                { 
+                    visited[r-1][c] = true;
+                    parentRow[r-1][c] = r;
+                    parentCol[r-1][c] = c; 
+                    r = r-1;
+                }
+                if (down != 'V' && down != 'X' && visited[r+1][c] == false){
+                    visited[r+1][c] = true;
+                    parentRow[r+1][c] = r;
+                    parentCol[r+1][c] = c; 
+                    r = r+1;
+                }
+                if (right != 'V' && right != 'X' && visited[r][c+1] == false){
+                    visited[r][c+1] = true;
+                    parentRow[r][c+1] = r;
+                    parentCol[r][c+1] = c;
+                    c = c+1;
+                } 
+                if (left != 'V' && left != 'X' && visited[r][c-1] == false){ 
+                    visited[r][c-1] = true;
+                    parentRow[r][c-1] = r;
+                    parentCol[r][c-1] = c;
+                    c = c-1;
+                }
+                
+            }
+            
+        }
+};
+
 
 
 
