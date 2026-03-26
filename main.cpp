@@ -39,23 +39,37 @@ class Grid{
 
             // Hardcoded map for testing 
 
-            arr[0][0] = 'S';
-            
-            arr[1][3] = 'X';
-            arr[2][3] = 'X';
-            arr[3][3] = 'X';
-            arr[4][3] = 'X';
-            arr[4][4] = 'X';
-            arr[4][5] = 'X';
+           arr[0][0] = 'S';
 
-            arr[2][7] = 'X';
-            arr[3][7] = 'X';
-            arr[3][6] = 'X';
+            arr[0][2] = 'X';
+            arr[1][2] = 'X';
+            arr[2][2] = 'X';
+            arr[3][2] = 'X';
 
-            arr[7][8] = 'X';
-            arr[8][8] = 'X';
+            arr[5][0] = 'X';
+            arr[5][1] = 'X';
+            arr[5][2] = 'X';
+            arr[5][3] = 'X';
+            arr[5][4] = 'X';
+            arr[5][5] = 'X';
+            arr[5][7] = 'X';
+            arr[5][8] = 'X';
+            arr[5][9] = 'X';
+
+            arr[2][8] = 'X';
+            arr[3][8] = 'X';
+            arr[4][8] = 'X';
+
+            arr[7][1] = 'X';
+            arr[7][2] = 'X';
+            arr[8][1] = 'X';
+
+            arr[7][6] = 'X';
+            arr[8][6] = 'X';
+            arr[8][7] = 'X';
 
             arr[9][9] = 'E';
+
             
         }
         void gridDisplay(void){
@@ -109,7 +123,7 @@ class Robot{
         
 };
 
-class BFS : public Grid , public Robot{
+class BFS : public Grid{
     public:
         queue<pair<int,int>> q;
         
@@ -118,49 +132,68 @@ class BFS : public Grid , public Robot{
         int parentRow[10][10];      // This is going to store the Row of the previos cell form which it came 
         int parentCol[10][10];      // same , stores col of previous cell and there will be a whole matrix for one cordinat (col here)
         // current row and col of the cell 
-        int r;
-        int c; 
+        
 
         void pathFind(void){
             q.push({0,0});
+            visited[0][0] = true;
+            int r , c;
 
             while (!q.empty())
             {
+                r = q.front().first;
+                c = q.front().second; 
+                q.pop();
                 if (arr[r][c] == 'E')
                 {
                     break;
                 }
-                else {
-                    q.pop();
-                }
-                if (up != 'V' && up != 'X' && visited[r-1][c] == false)
+                
+                
+                if (r-1 >= 0 && arr[r-1][c] != 'X' && visited[r-1][c] == false)  // up
                 { 
                     visited[r-1][c] = true;
                     parentRow[r-1][c] = r;
-                    parentCol[r-1][c] = c; 
-                    r = r-1;
+                    parentCol[r-1][c] = c;
+                    q.push({r-1,c}); 
+                    // We do not do this by ourself that to move it harcoded way as BFS does the thing by iteself , not
+                    // in predefined or our hadcoded way like this 
+                    //r = r-1;
                 }
-                if (down != 'V' && down != 'X' && visited[r+1][c] == false){
+                if (r+1 <= 9 && arr[r+1][c] != 'X' && visited[r+1][c] == false){    // down
                     visited[r+1][c] = true;
                     parentRow[r+1][c] = r;
-                    parentCol[r+1][c] = c; 
-                    r = r+1;
+                    parentCol[r+1][c] = c;
+                    q.push({r+1,c}); 
                 }
-                if (right != 'V' && right != 'X' && visited[r][c+1] == false){
+                if (c+1 <= 9 && arr[r][c+1] != 'X' && visited[r][c+1] == false){      // right 
                     visited[r][c+1] = true;
                     parentRow[r][c+1] = r;
                     parentCol[r][c+1] = c;
-                    c = c+1;
+                    q.push({r,c+1});
                 } 
-                if (left != 'V' && left != 'X' && visited[r][c-1] == false){ 
+                if (c-1 >= 0 && arr[r][c-1] != 'X' && visited[r][c-1] == false){        // left
                     visited[r][c-1] = true;
                     parentRow[r][c-1] = r;
                     parentCol[r][c-1] = c;
-                    c = c-1;
+                    q.push({r,c-1});
                 }
                 
             }
             
+        }
+        void tracePath(void){
+        int r = 9, c = 9;   // start from E
+    
+        while (r != 0 || c != 0){
+            arr[r][c] = '*';         // mark as path
+            int pr = parentRow[r][c];
+            int pc = parentCol[r][c];
+            r = pr;
+            c = pc;
+        }
+        arr[0][0] = 'S';    // keep S visible
+        arr[9][9] = 'E';    // keep E visible
         }
 };
 
@@ -168,13 +201,12 @@ class BFS : public Grid , public Robot{
 
 
 int main(){
-    Grid g1;
-    cout<<"This is the grid \n\n\n\n";
-    g1.girdSetup();
-    g1.gridDisplay();
-    cout<<"\n\n\n\n";
-    Robot r1(g1);
-    r1.location_fetcher();
-    r1.getNeighbour();
+    BFS bfs;
+    bfs.girdSetup();
+    bfs.gridDisplay();
+    cout << "\n\nFinding path...\n\n";
+    bfs.pathFind();
+    bfs.tracePath();
+    bfs.gridDisplay();
     return 0;
 }
